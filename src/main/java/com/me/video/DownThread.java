@@ -103,11 +103,7 @@ public class DownThread implements Runnable {
                 }
 
                 InputStream inputStream = entity.getContent();
-                int sizeAll=0;
-                while ((bytesRead = inputStream.read(buffer, 0, size)) != -1) {
-                    fileOutputStream.write(buffer, 0, bytesRead);
-                    sizeAll+=bytesRead;
-                }
+                int sizeAll=FileIo.writeBytes(inputStream,fileOutputStream,buffer);
                 inputStream.close();
                 EntityUtils.consume(entity);
                 //释放链接
