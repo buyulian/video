@@ -51,12 +51,12 @@ public class FileIo {
 
     @SuppressWarnings("unchecked")
     public static Object getObjectFromYamlMap(Map<String,Object> prop,String key){
-        String[] split = key.split(".");
+        String[] split = key.split("\\.");
         Object result=prop;
         Map<String,Object> curProp=null;
         for (String str:split){
             curProp= (Map<String, Object>) result;
-            result=prop.get(str);
+            result=curProp.get(str);
         }
         return result;
     }

@@ -1,10 +1,10 @@
 control:
   startNum: 0
-  endNum: 1
-  mergeNum: 10
+  endNum: 2
+  mergeNum: 5
   timeOut: 100
-  outFile: download\%03d.ts
-  threadNum: 1
+  outFile: E:\write\%03d.ts
+  threadNum: 2
   host: https://www3.yuboyun.com
   playList: config\playlist.m3u8
   tsPath: /hls/2018/10/19/bkIHp7cI/
