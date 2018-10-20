@@ -36,13 +36,13 @@ public class Video {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logger.error("文件下载成功");
+        logger.info("文件下载成功");
 
     }
 
     private void mergeFile() throws Exception {
         if(threadNum<2){
-            logger.error("不需要合并文件");
+            logger.info("不需要合并文件");
             return;
         }
         byte[] buffer=new byte[1<<16];
@@ -70,6 +70,6 @@ public class Video {
             outputStream.close();
         }
 
-        logger.error("合并文件完成");
+        logger.info("合并文件完成");
     }
 }
