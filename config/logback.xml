@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <property name="CONSOLE_LOG_PATTERN"
-              value="%date{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) [%boldYellow(%16.16thread)] %boldCyan(%-50.-50logger) : %msg%n"/>
+              value="%date{yyyy-MM-dd HH:mm:ss} %highlight(%-5level) [%boldYellow(%10.10thread)] %boldCyan(%-20.-20logger) : %msg%n"/>
     <property name="FILE_LOG_PATTERN"
               value="%-4relative [%thread] %-5level %-50.-50logger : %msg%n"/>
 
