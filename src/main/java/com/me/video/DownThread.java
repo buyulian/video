@@ -44,7 +44,7 @@ public class DownThread implements Runnable {
         String host=Global.host;
 
         int mergeNum=Global.mergeNum;
-        int timeOut=Global.timeOut;
+        int timeOut=Global.timeOut*1000;
 
         String[] tsUrls=Global.tsUrls;
 
