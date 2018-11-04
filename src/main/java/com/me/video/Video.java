@@ -13,7 +13,8 @@ public class Video {
     public void run(){
         int total=Global.tsUrls.length/Global.mergeNum+1;
         if(Global.endNum!=-1){
-            total=Global.endNum-Global.startNum;
+            int endNum=Math.min(Global.endNum,Global.tsUrls.length/Global.mergeNum+1);
+            total=endNum-Global.startNum;
         }
         int oneNum=(total-1)/threadNum+1;
         Thread[] threads=new Thread[threadNum];
