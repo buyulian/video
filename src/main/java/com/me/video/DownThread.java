@@ -126,8 +126,10 @@ public class DownThread implements Runnable {
                         ,getDateStr(predictTime-costTime)
                         ,getDateStr(predictTime)
                         ,speedTip);
-                logger.info("total num {},finished num {},{}"
-                        ,Video.totalNum,Video.finishedNum,tip);
+                logger.info("total num {},finished num {},percent {},{}"
+                        ,Video.totalNum,Video.finishedNum,
+                        String.format("%.2f",Video.finishedNum.get()*100/(double)Video.totalNum)+"%",
+                        tip);
             }
             fileOutputStream.close();
             logger.info("已写入文件 "+i);
