@@ -4,20 +4,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Video {
     private static Logger logger= LoggerFactory.getLogger(Video.class);
 
     private int threadNum=Global.threadNum;
 
+    public static volatile int totalNum=0;
+
+    public static volatile int failNum=0;
+
+    public static AtomicInteger finishedNum=new AtomicInteger(0);
+
+    public static AtomicLong downloadedByte=new AtomicLong(0);
+
+    public static volatile Date startDate;
+
     public void run(){
-        int total=Global.tsUrls.length/Global.mergeNum+1;
+        totalNum=Global.tsUrls.length;
+        int total=totalNum/Global.mergeNum+1;
+        logger.info("url total num is {},pageSize {},pageNum {}"
+                ,totalNum,Global.mergeNum,total);
         if(Global.endNum!=-1){
-            int endNum=Math.min(Global.endNum,Global.tsUrls.length/Global.mergeNum+1);
+            int endNum=Math.min(Global.endNum,totalNum/Global.mergeNum+1);
             total=endNum-Global.startNum;
         }
         int oneNum=(total-1)/threadNum+1;
         Thread[] threads=new Thread[threadNum];
+        startDate=new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        logger.info("download start date is {}", dateFormat.format(startDate));
         for(int i=0;i<threadNum;i++){
             threads[i]=new Thread(new DownThread(i*oneNum,(i+1)*oneNum,i));
             logger.info("线程 {},start {},end {}",i,i*oneNum,(i+1)*oneNum);
@@ -32,11 +52,15 @@ public class Video {
                 e.printStackTrace();
             }
         }
+        Date endDate=new Date();
+        long costMinite = (endDate.getTime() - startDate.getTime()) / 1000 / 60;
+        logger.info("download finished date is {},cost time {} minute",dateFormat.format(endDate),costMinite);
         try {
             mergeFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        logger.info("文件合并成功");
         logger.info("文件下载成功");
 
     }

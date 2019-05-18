@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Date;
 
 public class DownThread implements Runnable {
 
@@ -19,7 +20,6 @@ public class DownThread implements Runnable {
     private int threadId;
 
     private static Logger logger= LoggerFactory.getLogger(DownThread.class);
-
 
     public DownThread(int startNum, int endNum, int threadId) {
         this.startNum = startNum;
@@ -66,7 +66,7 @@ public class DownThread implements Runnable {
                 if(cs>=tsUrls.length){
                     fileOutputStream.close();
                     logger.info("已写入文件 "+i);
-                    logger.info("所有请求完成,总共 {},失败 {}",total,failNum);
+                    logger.info("最后一个线程所有请求完成,总共 {},失败 {}",total,failNum);
                     return;
                 }
 
@@ -94,12 +94,7 @@ public class DownThread implements Runnable {
                 if(!contentType.contains("video")){
                     failNum++;
                     logger.error("url 错误，不是 ts 格式，url is {},failNum is {}"+url,failNum);
-                    EntityUtils.consume(entity);
-                    //释放链接
-                    response.close();
-                    logger.info("已写入文件 "+i);
-                    fileOutputStream.close();
-                    return;
+                    continue;
                 }
 
                 InputStream inputStream = entity.getContent();
@@ -109,9 +104,37 @@ public class DownThread implements Runnable {
                 //释放链接
                 response.close();
                 logger.info(String.format("url: %d size:%d",cs,sizeAll));
+
+                long downloadedByte = Video.downloadedByte.addAndGet(sizeAll);
+                double finishedNum = Video.finishedNum.addAndGet(1);
+                Date curDate=new Date();
+                long costTime=(curDate.getTime()-Video.startDate.getTime())/1000;
+
+                if(finishedNum<1){
+                    finishedNum=1;
+                }
+                double remainderTime=costTime*Video.totalNum/finishedNum;
+
+                long netSpeed=downloadedByte/costTime;
+
+                String speedTip=String.format("downloaded byte %s,net speed %s"
+                        ,getNetSpeedStr(downloadedByte),getNetSpeedStr(netSpeed));
+
+
+                String tip = String.format("cost time %dh%dm%ds,remainder time %dh%dm%ds,speed %s"
+                        ,costTime /60/60, costTime/60%60, costTime % 60
+                        ,(int)remainderTime/60/60,(int)remainderTime/60%60,(int)remainderTime%60
+                        ,speedTip);
+                logger.info("total num {},finished num {},{}"
+                        ,Video.totalNum,Video.finishedNum,tip);
             }
             fileOutputStream.close();
             logger.info("已写入文件 "+i);
         }
+    }
+
+    private String getNetSpeedStr(long netSpeed){
+        long dw=1024;
+        return String.format("%dm%dk%db",netSpeed/dw/dw,netSpeed/dw%dw,netSpeed%dw);
     }
 }
