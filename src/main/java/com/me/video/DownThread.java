@@ -106,14 +106,14 @@ public class DownThread implements Runnable {
                 logger.info(String.format("url: %d size:%d",cs,sizeAll));
 
                 long downloadedByte = Video.downloadedByte.addAndGet(sizeAll);
-                double finishedNum = Video.finishedNum.addAndGet(1);
+                long finishedNum = Video.finishedNum.addAndGet(1);
                 Date curDate=new Date();
                 long costTime=(curDate.getTime()-Video.startDate.getTime())/1000;
 
                 if(finishedNum<1){
                     finishedNum=1;
                 }
-                double remainderTime=costTime*Video.totalNum/finishedNum;
+                long predictTime=costTime*Video.totalNum/finishedNum;
 
                 long netSpeed=downloadedByte/costTime;
 
@@ -121,9 +121,10 @@ public class DownThread implements Runnable {
                         ,getNetSpeedStr(downloadedByte),getNetSpeedStr(netSpeed));
 
 
-                String tip = String.format("cost time %dh%dm%ds,remainder time %dh%dm%ds,speed %s"
-                        ,costTime /60/60, costTime/60%60, costTime % 60
-                        ,(int)remainderTime/60/60,(int)remainderTime/60%60,(int)remainderTime%60
+                String tip = String.format("cost time %s,remainder time %s,predictTime time %s,speed %s"
+                        ,getDateStr(costTime)
+                        ,getDateStr(predictTime-costTime)
+                        ,getDateStr(predictTime)
                         ,speedTip);
                 logger.info("total num {},finished num {},{}"
                         ,Video.totalNum,Video.finishedNum,tip);
@@ -131,6 +132,11 @@ public class DownThread implements Runnable {
             fileOutputStream.close();
             logger.info("已写入文件 "+i);
         }
+    }
+
+    private String getDateStr(long time){
+        long dw=60;
+        return String.format("%dh%dm%ds",time/dw/dw,time/dw%dw,time%dw);
     }
 
     private String getNetSpeedStr(long netSpeed){
